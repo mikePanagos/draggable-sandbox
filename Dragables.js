@@ -1,5 +1,6 @@
 class Dragables {
   constructor(items) {
+    this.over = null;
     this.objs = this.setItems(items);
   }
 
@@ -106,13 +107,9 @@ class Dragables {
   }
 
   swapOrigins(one, two) {
-    console.log(this.objs);
-
     let orgTemp = one.origin;
     one.origin = two.origin;
     two.origin = orgTemp;
-
-    console.log(this.objs);
 
     // this.objs = this.objs.map((obj) => {
     //   if (obj.id === one.id) {
@@ -134,8 +131,27 @@ class Dragables {
         let h = elmnt.el.offsetHeight + t;
         let w = elmnt.el.offsetWidth + l;
 
-        if (t < y && y < h && l < x && x < w) {
+        console.log("this.over");
+
+        if (
+          !elmnt.el.classList.contains("noOver") &&
+          t < y &&
+          y < h &&
+          l < x &&
+          x < w
+        ) {
           console.log("is over,", elmnt.id);
+          this.over = elmnt.id;
+          elmnt.el.style.transition = " all 500ms ease";
+          elmnt.el.classList.add("noOver");
+          elmnt.el.style.top = item.origin.y + "px";
+          elmnt.el.style.left = item.origin.x + "px";
+          this.swapOrigins(item, elmnt);
+          setTimeout(() => {
+            elmnt.el.classList.remove("noOver");
+          }, 500);
+        } else {
+          this.over = null;
         }
       }
     });
