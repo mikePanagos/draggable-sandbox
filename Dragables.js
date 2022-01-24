@@ -129,9 +129,6 @@ class Dragables {
         let l = elmnt.el.offsetLeft;
         let h = elmnt.el.offsetHeight + t;
         let w = elmnt.el.offsetWidth + l;
-
-        console.log("this.over");
-
         if (
           !elmnt.el.classList.contains("noOver") &&
           t < y &&
@@ -140,9 +137,6 @@ class Dragables {
           x < w
         ) {
           overOrderId = elmnt.order;
-          console.log("is over,", elmnt.id);
-
-          console.log("id,overid", dragOrderId, overOrderId);
 
           this.moveOver(dragOrderId, overOrderId, item);
 
@@ -163,11 +157,15 @@ class Dragables {
   }
 
   moveOver(dragging, over, item) {
-   
-
     if (!this.moving) {
+      console.log("moveOver");
+
       this.moving = true;
-      let dif = Math.abs(dragging - over);
+      let direction = dragging - over;
+
+      console.log("direction", direction);
+
+      let dif = Math.abs(direction);
 
       //swap both items thats it
       if (dif === 1) {
@@ -184,7 +182,7 @@ class Dragables {
             this.swapOrigins(item, elmnt);
             setTimeout(() => {
               elmnt.el.classList.remove("noOver");
-               this.moving = false;
+              this.moving = false;
             }, 500);
           }
         });
@@ -195,26 +193,40 @@ class Dragables {
 
         //first option moving stuff to the left
         let first;
-        let list = this.objs.filter(
-          (item) => item.order >= dragging && item.order <= over
-        );
+        let list;
+        console.log(dragging, over);
 
+        if (direction < 0) {
+          list = this.objs.filter(
+            (item) => item.order >= dragging && item.order <= over
+          );
+          list = list.sort((a, b) => a.order - b.order);
+        } else {
+          list = this.objs.filter(
+            (item) => item.order <= dragging && item.order >= over
+          );
+
+          list = list.sort((a, b) => b.order - a.order);
+        }
         console.log("list", list);
 
-        this.list.forEach((elmnt, index) => {
+        list.forEach((elmnt, index) => {
           console.log("item");
-          
+
           if (index === 0) {
-            first = { ...elmnt };
-          } else if (!elmnt.el.classList.contains("noOver")) {
+            first = elmnt;
+          } else {
             // this.over = elmnt.id;
             elmnt.el.style.transition = " all 500ms ease";
             elmnt.el.classList.add("noOver");
             elmnt.el.style.top = first.origin.y + "px";
             elmnt.el.style.left = first.origin.x + "px";
-            let tempEl = elmnt;
+            // let tempSecon = elmnt;
+
             this.swapOrigins(first, elmnt);
-            first = tempEl;
+            console.log("first", first);
+
+            // first = tempSecon;
 
             setTimeout(() => {
               elmnt.el.classList.remove("noOver");
