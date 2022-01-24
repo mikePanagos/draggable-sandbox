@@ -2,6 +2,7 @@ class Dragables {
   constructor(items) {
     this.objs = this.setItems(items);
   }
+
   setItems(items) {
     let l = items.map((i, ind) => {
       return {
