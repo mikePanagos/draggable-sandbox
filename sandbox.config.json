@@ -1,4 +1,3 @@
 {
-  "template": "static",
-  "hardReloadOnChange": false
+  "template": "static"
 }

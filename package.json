@@ -1,23 +1,23 @@
 {
-  "name": "drag-and-drop-itemes",
+  "name": "draggables",
   "version": "1.0.0",
   "description": "",
-  "main": "index.html",
+  "main": "index1.html",
   "scripts": {
     "start": "serve",
     "build": "echo This is a static template, there is no bundler or bundling involved!"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codesandbox-app/static-template.git"
+    "url": "git+https://github.com/mikePanagos/draggable-sandbox.git"
   },
   "keywords": [],
-  "author": "Ives van Hoorne",
+  "author": "michael e panagos",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/codesandbox-app/static-template/issues"
+    "url": "https://github.com/mikePanagos/draggable-sandbox.git/issues"
   },
-  "homepage": "https://github.com/codesandbox-app/static-template#readme",
+  "homepage": "https://github.com/mikePanagos/draggable-sandbox.git#readme",
   "devDependencies": {
     "serve": "^11.2.0"
   }
