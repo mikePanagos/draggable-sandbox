@@ -2,12 +2,14 @@ class Dragables {
   constructor(items) {
     this.over = null;
     this.objs = this.setItems(items);
+    this.moving = false;
   }
 
   setItems(items) {
     let l = items.map((i, ind) => {
       return {
         id: ind,
+        order: ind,
         el: i,
         pos1: 0,
         pos2: 0,
@@ -108,24 +110,21 @@ class Dragables {
 
   swapOrigins(one, two) {
     let orgTemp = one.origin;
+    let oneOrder = one.order;
     one.origin = two.origin;
+    one.order = two.order;
     two.origin = orgTemp;
-
-    // this.objs = this.objs.map((obj) => {
-    //   if (obj.id === one.id) {
-    //     return one;
-    //   } else if (obj.id === two.id) {
-    //     return two;
-    //   }
-    //   return obj;
-    // });
+    two.order = oneOrder;
   }
 
   isOver(e, item) {
+    let id = item.id;
+    let dragOrderId = item.order;
+    let overOrderId;
     let x = e.clientX;
     let y = e.clientY;
     this.objs.forEach((elmnt) => {
-      if (elmnt.el.id !== item.el.id) {
+      if (elmnt.id !== id) {
         let t = elmnt.el.offsetTop;
         let l = elmnt.el.offsetLeft;
         let h = elmnt.el.offsetHeight + t;
@@ -140,20 +139,94 @@ class Dragables {
           l < x &&
           x < w
         ) {
+          overOrderId = elmnt.order;
           console.log("is over,", elmnt.id);
-          this.over = elmnt.id;
-          elmnt.el.style.transition = " all 500ms ease";
-          elmnt.el.classList.add("noOver");
-          elmnt.el.style.top = item.origin.y + "px";
-          elmnt.el.style.left = item.origin.x + "px";
-          this.swapOrigins(item, elmnt);
-          setTimeout(() => {
-            elmnt.el.classList.remove("noOver");
-          }, 500);
+
+          console.log("id,overid", dragOrderId, overOrderId);
+
+          this.moveOver(dragOrderId, overOrderId, item);
+
+          // this.over = elmnt.id;
+          // elmnt.el.style.transition = " all 500ms ease";
+          // elmnt.el.classList.add("noOver");
+          // elmnt.el.style.top = item.origin.y + "px";
+          // elmnt.el.style.left = item.origin.x + "px";
+          // this.swapOrigins(item, elmnt);
+          // setTimeout(() => {
+          //   elmnt.el.classList.remove("noOver");
+          // }, 500);
         } else {
           this.over = null;
         }
       }
     });
+  }
+
+  moveOver(dragging, over, item) {
+   
+
+    if (!this.moving) {
+      this.moving = true;
+      let dif = Math.abs(dragging - over);
+
+      //swap both items thats it
+      if (dif === 1) {
+        console.log("just swapping");
+        this.objs.forEach((elmnt) => {
+          console.log("this.over");
+
+          if (!elmnt.el.classList.contains("noOver") && elmnt.order === over) {
+            this.over = elmnt.id;
+            elmnt.el.style.transition = " all 500ms ease";
+            elmnt.el.classList.add("noOver");
+            elmnt.el.style.top = item.origin.y + "px";
+            elmnt.el.style.left = item.origin.x + "px";
+            this.swapOrigins(item, elmnt);
+            setTimeout(() => {
+              elmnt.el.classList.remove("noOver");
+               this.moving = false;
+            }, 500);
+          }
+        });
+      }
+      //we need to shift everything around these
+      else {
+        //2 options moving left or right
+
+        //first option moving stuff to the left
+        let first;
+        let list = this.objs.filter(
+          (item) => item.order >= dragging && item.order <= over
+        );
+
+        console.log("list", list);
+
+        this.list.forEach((elmnt, index) => {
+          console.log("item");
+          
+          if (index === 0) {
+            first = { ...elmnt };
+          } else if (!elmnt.el.classList.contains("noOver")) {
+            // this.over = elmnt.id;
+            elmnt.el.style.transition = " all 500ms ease";
+            elmnt.el.classList.add("noOver");
+            elmnt.el.style.top = first.origin.y + "px";
+            elmnt.el.style.left = first.origin.x + "px";
+            let tempEl = elmnt;
+            this.swapOrigins(first, elmnt);
+            first = tempEl;
+
+            setTimeout(() => {
+              elmnt.el.classList.remove("noOver");
+              if (index === list.length - 1) {
+                this.moving = false;
+              }
+            }, 500);
+          }
+        });
+      }
+
+      console.log("dif", dif);
+    }
   }
 }
